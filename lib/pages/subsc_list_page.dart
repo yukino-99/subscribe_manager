@@ -81,42 +81,86 @@ class SubscListPageState extends State<SubscListPage> {
                             vertical: 8.0,
                           ),
                           child: Card(
+                            margin: EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             elevation: 4,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: ListTile(
-                              onTap: () async {
-                                final editedSubsc = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) => AddSubscPage(
-                                          subscription: subsc, // ← 編集対象を渡す！！
-                                        ),
-                                  ),
-                                );
-
-                                if (editedSubsc != null) {
-                                  setState(() {
-                                    subscList[subscList.indexOf(subsc)] =
-                                        editedSubsc;
-                                  });
-                                  saveSubscList();
-                                }
-                              },
-                              title: Text(
-                                subsc.name,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
+                            child: Slidable(
+                              key: Key(subsc.name),
+                              endActionPane: ActionPane(
+                                motion: ScrollMotion(),
+                                dismissible: DismissiblePane(
+                                  onDismissed: () {
+                                    setState(() {
+                                      subscList.remove(subsc);
+                                    });
+                                    saveSubscList();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('${subsc.name}を削除しました'),
+                                      ),
+                                    );
+                                  },
                                 ),
+                                children: [
+                                  SlidableAction(
+                                    onPressed: (context) {
+                                      setState(() {
+                                        subscList.remove(subsc);
+                                      });
+                                      saveSubscList();
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text('${subsc.name}を削除しました'),
+                                        ),
+                                      );
+                                    },
+                                    backgroundColor: Colors.red,
+                                    foregroundColor: Colors.white,
+                                    icon: Icons.delete,
+                                    label: '削除',
+                                  ),
+                                ],
                               ),
-                              subtitle: Padding(
-                                padding: const EdgeInsets.only(top: 4.0),
-                                child: Text(
-                                  '${subsc.price}円 / 支払日: ${subsc.payDay}日 / ${subsc.paymentMethod}',
-                                  style: TextStyle(fontSize: 14),
+                              child: ListTile(
+                                onTap: () async {
+                                  final editedSubsc = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => AddSubscPage(
+                                            subscription: subsc, // ← 編集対象を渡す！！
+                                          ),
+                                    ),
+                                  );
+
+                                  if (editedSubsc != null) {
+                                    setState(() {
+                                      subscList[subscList.indexOf(subsc)] =
+                                          editedSubsc;
+                                    });
+                                    saveSubscList();
+                                  }
+                                },
+                                title: Text(
+                                  subsc.name,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                subtitle: Padding(
+                                  padding: const EdgeInsets.only(top: 4.0),
+                                  child: Text(
+                                    '${subsc.price}円 / 支払日: ${subsc.payDay}日 / ${subsc.paymentMethod}',
+                                    style: TextStyle(fontSize: 14),
+                                  ),
                                 ),
                               ),
                             ),
