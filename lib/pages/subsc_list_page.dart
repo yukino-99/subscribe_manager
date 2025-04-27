@@ -1,6 +1,7 @@
+import '../utils/notification_service.dart';
 import 'package:subscribe_manager/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert'; // JSON変換用
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../models/subscription.dart';
 import 'add_subsc_page.dart';
@@ -30,6 +31,7 @@ class SubscListPageState extends State<SubscListPage> {
   @override
   void initState() {
     super.initState();
+    initializeNotifications();
     loadSubscList();
   }
 
@@ -146,6 +148,9 @@ class SubscListPageState extends State<SubscListPage> {
                                           editedSubsc;
                                     });
                                     saveSubscList();
+                                    scheduleNotificationForSubscription(
+                                      editedSubsc,
+                                    );
                                   }
                                 },
                                 title: Text(
@@ -183,6 +188,7 @@ class SubscListPageState extends State<SubscListPage> {
               subscList.add(newSubsc);
             });
             saveSubscList();
+            scheduleNotificationForSubscription(newSubsc);
           }
         },
         child: Icon(Icons.add),
