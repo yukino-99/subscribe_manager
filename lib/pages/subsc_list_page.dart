@@ -86,6 +86,25 @@ class SubscListPageState extends State<SubscListPage> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: ListTile(
+                              onTap: () async {
+                                final editedSubsc = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => AddSubscPage(
+                                          subscription: subsc, // ← 編集対象を渡す！！
+                                        ),
+                                  ),
+                                );
+
+                                if (editedSubsc != null) {
+                                  setState(() {
+                                    subscList[subscList.indexOf(subsc)] =
+                                        editedSubsc;
+                                  });
+                                  saveSubscList();
+                                }
+                              },
                               title: Text(
                                 subsc.name,
                                 style: TextStyle(

@@ -3,16 +3,41 @@ import 'package:flutter/material.dart';
 import '../models/subscription.dart';
 
 class AddSubscPage extends StatefulWidget {
-  const AddSubscPage({super.key});
+  final Subscription? subscription;
+  AddSubscPage({super.key, this.subscription});
+
   @override
   AddSubscPageState createState() => AddSubscPageState();
 }
 
 class AddSubscPageState extends State<AddSubscPage> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _payDayController = TextEditingController();
+  late TextEditingController _nameController = TextEditingController();
+  late TextEditingController _priceController = TextEditingController();
+  late TextEditingController _payDayController = TextEditingController();
   String _selectedPaymentMethod = 'クレカ';
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(
+      text: widget.subscription?.name ?? '',
+    );
+    _priceController = TextEditingController(
+      text: widget.subscription?.price.toString() ?? '',
+    );
+    _payDayController = TextEditingController(
+      text: widget.subscription?.payDay.toString() ?? '',
+    );
+    _selectedPaymentMethod = widget.subscription?.paymentMethod ?? 'クレカ';
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _priceController.dispose();
+    _payDayController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,15 +92,16 @@ class AddSubscPageState extends State<AddSubscPage> {
                   return;
                 }
 
-                final newSubsc = Subscription(
+                final editedSubsc = Subscription(
                   name: _nameController.text,
                   price: int.parse(_priceController.text),
                   payDay: int.parse(_payDayController.text),
                   paymentMethod: _selectedPaymentMethod,
                 );
-                Navigator.pop(context, newSubsc);
+
+                Navigator.pop(context, editedSubsc);
               },
-              child: Text('追加'),
+              child: Text('保存'),
             ),
           ],
         ),
