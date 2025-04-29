@@ -65,7 +65,7 @@ class SubscListPageState extends State<SubscListPage> {
             padding: const EdgeInsets.all(16.0),
             child: Text(
               '合計：$totalMonthlyCost円',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
           // フィルター選択ドロップダウン
