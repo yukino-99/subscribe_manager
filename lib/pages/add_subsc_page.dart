@@ -4,7 +4,7 @@ import '../models/subscription.dart';
 
 class AddSubscPage extends StatefulWidget {
   final Subscription? subscription;
-  AddSubscPage({super.key, this.subscription});
+  const AddSubscPage({super.key, this.subscription});
 
   @override
   AddSubscPageState createState() => AddSubscPageState();

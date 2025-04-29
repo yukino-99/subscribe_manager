@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:subscribe_manager/services/notification_service.dart';
 import 'pages/subsc_list_page.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+    // 通知サービス（tz + プラグイン）の初期化を一度だけ実行
+  await NotificationService.ensureInitialized();
+
   runApp(MyApp());
 }
 

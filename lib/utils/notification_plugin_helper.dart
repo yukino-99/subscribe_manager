@@ -1,25 +1,16 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import '../models/subscription.dart';
-import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/material.dart';
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:subscribe_manager/models/subscription.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
+/// Flutter通知プラグインの初期化
 Future<void> initializeNotifications() async {
-  tz.initializeTimeZones();
-
-  final String localName =
-      await FlutterNativeTimezone.getLocalTimezone();
-  tz.setLocalLocation(tz.getLocation(localName));
-
   const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('@mipmap/ic_launcher'); // アイコン設定（そのままでOK）
+      AndroidInitializationSettings('@mipmap/ic_launcher');
 
-  const DarwinInitializationSettings initializationSettingsIOS =
-      DarwinInitializationSettings(); // iOS設定（デフォルト）
+  const DarwinInitializationSettings initializationSettingsIOS = DarwinInitializationSettings();
 
   const InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
@@ -29,13 +20,9 @@ Future<void> initializeNotifications() async {
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 }
 
-Future<void> scheduleNotificationForSubscription(
-  Subscription subsc,
-  TimeOfDay notificationTime,
-) async {
+/// 1件のサブスクについて通知をスケジュール登録する
+Future<void> scheduleNotificationForSubscription(Subscription subsc, TimeOfDay notificationTime) async {
   final now = DateTime.now();
-
-  // 支払日の1日前
   final notificationDate = tz.TZDateTime.local(
     now.year,
     now.month,
@@ -45,12 +32,11 @@ Future<void> scheduleNotificationForSubscription(
   );
 
   if (notificationDate.isBefore(now)) {
-    // すでに過ぎてたらスキップ
     return;
   }
 
   await flutterLocalNotificationsPlugin.zonedSchedule(
-    subsc.hashCode, // 通知ID（ユニーク）
+    subsc.hashCode,
     '${subsc.name}の支払日リマインダー',
     '明日${subsc.payDay}日は${subsc.name}の支払日です！',
     notificationDate,
@@ -65,6 +51,6 @@ Future<void> scheduleNotificationForSubscription(
       iOS: DarwinNotificationDetails(),
     ),
     androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-    // matchDateTimeComponents: DateTimeComponents.dateAndTime,
+    matchDateTimeComponents: DateTimeComponents.dateAndTime,
   );
 }
