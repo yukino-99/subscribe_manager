@@ -4,8 +4,8 @@ import 'pages/subsc_list_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-    // 通知サービス（tz + プラグイン）の初期化を一度だけ実行
+
+  // 通知サービス（tz + プラグイン）の初期化を一度だけ実行
   await NotificationService.ensureInitialized();
 
   runApp(MyApp());

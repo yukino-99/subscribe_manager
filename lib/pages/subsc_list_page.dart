@@ -16,14 +16,16 @@ class SubscListPage extends StatefulWidget {
 
 class SubscListPageState extends State<SubscListPage> {
   String _selectedPaymentFilter = '全て'; // 支払い方法フィルター
-  List<Subscription> subscList = [];     // サブスクデータ本体
+  List<Subscription> subscList = []; // サブスクデータ本体
 
   /// 支払い方法でフィルタリングしたリスト
   List<Subscription> get filteredSubscList {
     if (_selectedPaymentFilter == '全て') {
       return subscList;
     } else {
-      return subscList.where((subsc) => subsc.paymentMethod == _selectedPaymentFilter).toList();
+      return subscList
+          .where((subsc) => subsc.paymentMethod == _selectedPaymentFilter)
+          .toList();
     }
   }
 
@@ -76,89 +78,104 @@ class SubscListPageState extends State<SubscListPage> {
                   _selectedPaymentFilter = newValue!;
                 });
               },
-              items: paymentMethodsForFilter.map(
-                (method) => DropdownMenuItem(
-                  value: method,
-                  child: Text(method),
-                ),
-              ).toList(),
+              items:
+                  paymentMethodsForFilter
+                      .map(
+                        (method) => DropdownMenuItem(
+                          value: method,
+                          child: Text(method),
+                        ),
+                      )
+                      .toList(),
             ),
           ),
           // サブスク一覧表示エリア
           Expanded(
-            child: filteredSubscList.isEmpty
-                ? const Center(child: Text('登録されているサブスクがありません'))
-                : ListView.builder(
-                    itemCount: filteredSubscList.length,
-                    itemBuilder: (context, index) {
-                      final subsc = filteredSubscList[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                        child: Card(
-                          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          elevation: 4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+            child:
+                filteredSubscList.isEmpty
+                    ? buildEmptyState()
+                    : ListView.builder(
+                      itemCount: filteredSubscList.length,
+                      itemBuilder: (context, index) {
+                        final subsc = filteredSubscList[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                            vertical: 8.0,
                           ),
-                          child: Slidable(
-                            key: Key(subsc.name),
-                            endActionPane: ActionPane(
-                              motion: const ScrollMotion(),
-                              dismissible: DismissiblePane(
-                                onDismissed: () async {
-                                  await _deleteSubscription(subsc);
-                                },
-                              ),
-                              children: [
-                                SlidableAction(
-                                  onPressed: (context) async {
+                          child: Card(
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Slidable(
+                              key: Key(subsc.name),
+                              endActionPane: ActionPane(
+                                motion: const ScrollMotion(),
+                                dismissible: DismissiblePane(
+                                  onDismissed: () async {
                                     await _deleteSubscription(subsc);
                                   },
-                                  backgroundColor: Colors.red,
-                                  foregroundColor: Colors.white,
-                                  icon: Icons.delete,
-                                  label: '削除',
                                 ),
-                              ],
-                            ),
-                            child: ListTile(
-                              // サブスクタップで編集画面へ遷移
-                              onTap: () async {
-                                final editedSubsc = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddSubscPage(subscription: subsc),
+                                children: [
+                                  SlidableAction(
+                                    onPressed: (context) async {
+                                      await _deleteSubscription(subsc);
+                                    },
+                                    backgroundColor: Colors.red,
+                                    foregroundColor: Colors.white,
+                                    icon: Icons.delete,
+                                    label: '削除',
                                   ),
-                                );
-
-                                if (editedSubsc != null) {
-                                  setState(() {
-                                    subscList[subscList.indexOf(subsc)] = editedSubsc;
-                                  });
-                                  await saveSubscList();
-                                  await NotificationService.setNotificationSchedule(editedSubsc);
-                                }
-                              },
-                              title: Text(
-                                subsc.name,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
+                                ],
                               ),
-                              subtitle: Padding(
-                                padding: const EdgeInsets.only(top: 4.0),
-                                child: Text(
-                                  '${subsc.price}円 / 支払日: ${subsc.payDay}日 / ${subsc.paymentMethod}',
-                                  style: const TextStyle(fontSize: 14),
+                              child: ListTile(
+                                // サブスクタップで編集画面へ遷移
+                                onTap: () async {
+                                  final editedSubsc = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) =>
+                                              AddSubscPage(subscription: subsc),
+                                    ),
+                                  );
+
+                                  if (editedSubsc != null) {
+                                    setState(() {
+                                      subscList[subscList.indexOf(subsc)] =
+                                          editedSubsc;
+                                    });
+                                    await saveSubscList();
+                                    await NotificationService.setNotificationSchedule(
+                                      editedSubsc,
+                                    );
+                                  }
+                                },
+                                title: Text(
+                                  subsc.name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                subtitle: Padding(
+                                  padding: const EdgeInsets.only(top: 4.0),
+                                  child: Text(
+                                    '${subsc.price}円 / 支払日: ${subsc.payDay}日 / ${subsc.paymentMethod}',
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    ),
           ),
         ],
       ),
@@ -183,6 +200,44 @@ class SubscListPageState extends State<SubscListPage> {
     );
   }
 
+  /// サブスクが 0 件のときに表示するエンプティステート。
+  /// - LayoutBuilder で Expanded 領域の高さを取得し、
+  ///   残り領域の中央にアイコン＋テキストを配置する。
+  Widget buildEmptyState() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double screenHeight = constraints.maxHeight;
+        final double offsetY = screenHeight * 0.08; // ← 高さの8%分だけ上にずらす
+
+        return Center(
+          child: Transform.translate(
+            offset: Offset(0, -offsetY),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                Icon(
+                  Icons.subscriptions_outlined,
+                  size: 90,
+                  color: Colors.blueGrey,
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'サブスクが登録されていません',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 12),
+                Text(
+                  '右下の＋ボタンから追加してください',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   /// フィルター済みリストの合計金額を計算
   int get totalMonthlyCost {
     return filteredSubscList.fold(0, (sum, item) => sum + item.price);
@@ -191,14 +246,15 @@ class SubscListPageState extends State<SubscListPage> {
   /// サブスクデータをローカル保存
   Future<void> saveSubscList() async {
     final prefs = await SharedPreferences.getInstance();
-    List<String> subscJsonList = subscList.map((subsc) {
-      return jsonEncode({
-        'name': subsc.name,
-        'price': subsc.price,
-        'payDay': subsc.payDay,
-        'paymentMethod': subsc.paymentMethod,
-      });
-    }).toList();
+    List<String> subscJsonList =
+        subscList.map((subsc) {
+          return jsonEncode({
+            'name': subsc.name,
+            'price': subsc.price,
+            'payDay': subsc.payDay,
+            'paymentMethod': subsc.paymentMethod,
+          });
+        }).toList();
 
     await prefs.setStringList('subscList', subscJsonList);
   }
@@ -210,15 +266,16 @@ class SubscListPageState extends State<SubscListPage> {
 
     if (subscJsonList != null) {
       setState(() {
-        subscList = subscJsonList.map((jsonStr) {
-          final Map<String, dynamic> map = jsonDecode(jsonStr);
-          return Subscription(
-            name: map['name'],
-            price: map['price'],
-            payDay: map['payDay'],
-            paymentMethod: map['paymentMethod'],
-          );
-        }).toList();
+        subscList =
+            subscJsonList.map((jsonStr) {
+              final Map<String, dynamic> map = jsonDecode(jsonStr);
+              return Subscription(
+                name: map['name'],
+                price: map['price'],
+                payDay: map['payDay'],
+                paymentMethod: map['paymentMethod'],
+              );
+            }).toList();
       });
     }
   }
@@ -231,8 +288,8 @@ class SubscListPageState extends State<SubscListPage> {
     await saveSubscList();
     await NotificationService.cancelNotificationForSubscription(subsc);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${subsc.name}を削除しました')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('${subsc.name}を削除しました')));
   }
 }

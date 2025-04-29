@@ -7,9 +7,10 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
-  /// 初期化を保証するパブリック API  
+  /// 初期化を保証するパブリック API
   /// 何度呼んでも内部は 1 回しか実行されない。
   static Future<void> ensureInitialized() => _initializer;
+
   /// _initializer は late final Future で再入防止。
   static final Future<void> _initializer = _initInternal();
 
@@ -30,7 +31,9 @@ class NotificationService {
   }
 
   /// 全サブスクの通知をリスケする
-  static Future<void> rescheduleAllNotifications(List<Subscription> subscList) async {
+  static Future<void> rescheduleAllNotifications(
+    List<Subscription> subscList,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
     final hour = prefs.getInt('notification_hour') ?? 9;
     final minute = prefs.getInt('notification_minute') ?? 0;
@@ -42,7 +45,9 @@ class NotificationService {
   }
 
   /// 1つのサブスクだけ通知キャンセルする
-  static Future<void> cancelNotificationForSubscription(Subscription subsc) async {
+  static Future<void> cancelNotificationForSubscription(
+    Subscription subsc,
+  ) async {
     await flutterLocalNotificationsPlugin.cancel(subsc.hashCode);
   }
 

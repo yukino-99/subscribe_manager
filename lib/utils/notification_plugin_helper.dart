@@ -3,14 +3,16 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/material.dart';
 import 'package:subscribe_manager/models/subscription.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 /// Flutter通知プラグインの初期化
 Future<void> initializeNotifications() async {
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('@mipmap/ic_launcher');
 
-  const DarwinInitializationSettings initializationSettingsIOS = DarwinInitializationSettings();
+  const DarwinInitializationSettings initializationSettingsIOS =
+      DarwinInitializationSettings();
 
   const InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
@@ -21,7 +23,10 @@ Future<void> initializeNotifications() async {
 }
 
 /// 1件のサブスクについて通知をスケジュール登録する
-Future<void> scheduleNotificationForSubscription(Subscription subsc, TimeOfDay notificationTime) async {
+Future<void> scheduleNotificationForSubscription(
+  Subscription subsc,
+  TimeOfDay notificationTime,
+) async {
   final now = DateTime.now();
   final notificationDate = tz.TZDateTime.local(
     now.year,
