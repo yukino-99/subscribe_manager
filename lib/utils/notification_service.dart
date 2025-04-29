@@ -2,12 +2,19 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../models/subscription.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter/material.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
 Future<void> initializeNotifications() async {
   tz.initializeTimeZones();
+
+  final String localName =
+      await FlutterNativeTimezone.getLocalTimezone();
+  tz.setLocalLocation(tz.getLocation(localName));
+
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('@mipmap/ic_launcher'); // アイコン設定（そのままでOK）
 
@@ -22,16 +29,20 @@ Future<void> initializeNotifications() async {
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 }
 
-Future<void> scheduleNotificationForSubscription(Subscription subsc) async {
+Future<void> scheduleNotificationForSubscription(
+  Subscription subsc,
+  TimeOfDay notificationTime,
+) async {
   final now = DateTime.now();
 
   // 支払日の1日前
-    final notificationDate = tz.TZDateTime.local(
+  final notificationDate = tz.TZDateTime.local(
     now.year,
     now.month,
     subsc.payDay - 1,
-    9, 0, 0,
-  ); // 朝9時に通知
+    notificationTime.hour,
+    notificationTime.minute,
+  );
 
   if (notificationDate.isBefore(now)) {
     // すでに過ぎてたらスキップ
@@ -54,6 +65,6 @@ Future<void> scheduleNotificationForSubscription(Subscription subsc) async {
       iOS: DarwinNotificationDetails(),
     ),
     androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-    matchDateTimeComponents: DateTimeComponents.dateAndTime,
+    // matchDateTimeComponents: DateTimeComponents.dateAndTime,
   );
 }

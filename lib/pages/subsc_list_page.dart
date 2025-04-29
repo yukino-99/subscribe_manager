@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../models/subscription.dart';
 import 'add_subsc_page.dart';
+import 'setting_page.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 class SubscListPage extends StatefulWidget {
@@ -38,7 +39,20 @@ class SubscListPageState extends State<SubscListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('サブスク管理')),
+      appBar: AppBar(
+        title: Text('サブスク管理'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingPage()),
+              );
+            },
+          ),
+        ],
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -148,9 +162,7 @@ class SubscListPageState extends State<SubscListPage> {
                                           editedSubsc;
                                     });
                                     saveSubscList();
-                                    scheduleNotificationForSubscription(
-                                      editedSubsc,
-                                    );
+                                    setNotificationSchedule(editedSubsc);
                                   }
                                 },
                                 title: Text(
@@ -188,7 +200,7 @@ class SubscListPageState extends State<SubscListPage> {
               subscList.add(newSubsc);
             });
             saveSubscList();
-            scheduleNotificationForSubscription(newSubsc);
+            setNotificationSchedule(newSubsc);
           }
         },
         child: Icon(Icons.add),
@@ -215,6 +227,7 @@ class SubscListPageState extends State<SubscListPage> {
     await prefs.setStringList('subscList', subscJsonList);
   }
 
+  /// サブスク一覧取得
   Future<void> loadSubscList() async {
     final prefs = await SharedPreferences.getInstance();
     final List<String>? subscJsonList = prefs.getStringList('subscList');
@@ -232,6 +245,33 @@ class SubscListPageState extends State<SubscListPage> {
               );
             }).toList();
       });
+    }
+  }
+
+  /// 通知スケジュールをセット
+  void setNotificationSchedule(newSubsc) async {
+    final prefs = await SharedPreferences.getInstance();
+    final hour = prefs.getInt('notification_hour') ?? 9;
+    final minute = prefs.getInt('notification_minute') ?? 0;
+    final notificationTime = TimeOfDay(hour: hour, minute: minute);
+
+    await scheduleNotificationForSubscription(newSubsc, notificationTime);
+  }
+
+/// 通知スケジュールを再設定
+  Future<void> rescheduleAllNotifications() async {
+    // 通知をすべてキャンセル
+    await flutterLocalNotificationsPlugin.cancelAll();
+
+    // SharedPreferencesから通知時間を取得
+    final prefs = await SharedPreferences.getInstance();
+    final hour = prefs.getInt('notification_hour') ?? 9;
+    final minute = prefs.getInt('notification_minute') ?? 0;
+    final notificationTime = TimeOfDay(hour: hour, minute: minute);
+
+    // サブスク1件ずつ通知再スケジュール
+    for (final subsc in subscList) {
+      await scheduleNotificationForSubscription(subsc, notificationTime);
     }
   }
 }
