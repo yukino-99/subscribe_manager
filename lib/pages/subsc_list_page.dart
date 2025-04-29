@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../models/subscription.dart';
+import '../widgets/ad_banner.dart';
 import 'add_subsc_page.dart';
 import 'setting_page.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -179,6 +180,7 @@ class SubscListPageState extends State<SubscListPage> {
           ),
         ],
       ),
+      bottomNavigationBar: const AdBanner(),
       // サブスク追加ボタン
       floatingActionButton: FloatingActionButton(
         onPressed: () async {

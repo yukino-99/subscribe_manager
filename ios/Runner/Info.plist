@@ -2,6 +2,21 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<!-- ▼1 Google AdMob アプリ ID -->
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-6435113782767647~7863739613</string>
+
+	<!-- ▼2 公式推奨：SKAdNetworkItems（Apple広告計測）-->
+	<key>SKAdNetworkItems</key>
+	<array>
+  		<dict><key>SKAdNetworkIdentifier</key><string>cstr6suwn9.skadnetwork</string></dict>
+  		<dict><key>SKAdNetworkIdentifier</key><string>4fzdc2evr5.skadnetwork</string></dict>
+  		<!-- 公式リストを必要に応じ追加 -->
+	</array>
+
+	<key>NSUserTrackingUsageDescription</key>
+	<string>このアプリでは広告のパーソナライズのためにトラッキングを利用します。</string>
+	
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
