@@ -42,10 +42,10 @@ class _AdBannerState extends State<AdBanner> {
   Widget build(BuildContext context) {
     return _isAdLoaded
         ? SizedBox(
-            width: _bannerAd.size.width.toDouble(),
-            height: _bannerAd.size.height.toDouble(),
-            child: AdWidget(ad: _bannerAd),
-          )
+          width: _bannerAd.size.width.toDouble(),
+          height: _bannerAd.size.height.toDouble(),
+          child: AdWidget(ad: _bannerAd),
+        )
         : const SizedBox.shrink(); // 読み込み前は非表示
   }
 }

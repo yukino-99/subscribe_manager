@@ -2,6 +2,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/material.dart';
 import 'package:subscribe_manager/models/subscription.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -59,3 +60,16 @@ Future<void> scheduleNotificationForSubscription(
     matchDateTimeComponents: DateTimeComponents.dateAndTime,
   );
 }
+
+  /// 通知権限のステータスを確認し、必要に応じてユーザーに許可を求める
+  Future<void> handleNotificationPermission() async {
+    final status = await Permission.notification.status;
+
+    if (status.isDenied || status.isRestricted) {
+      final result = await Permission.notification.request();
+
+      if (result.isPermanentlyDenied) {
+        openAppSettings();
+      }
+    }
+  }

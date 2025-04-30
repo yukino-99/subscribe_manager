@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:subscribe_manager/services/notification_service.dart';
 import 'pages/subsc_list_page.dart';
+import 'package:subscribe_manager/utils/notification_plugin_helper.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 
@@ -18,6 +19,9 @@ Future<void> main() async {
 
   // 通知サービス（tz + プラグイン）の初期化を一度だけ実行
   await NotificationService.ensureInitialized();
+
+  // 通知権限チェック処理を実行
+  handleNotificationPermission();
 
   runApp(MyApp());
 }

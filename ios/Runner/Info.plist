@@ -16,6 +16,9 @@
 
 	<key>NSUserTrackingUsageDescription</key>
 	<string>このアプリでは広告のパーソナライズのためにトラッキングを利用します。</string>
+
+	<key>NSUserNotificationUsageDescription</key>
+	<string>通知を受け取るために必要です</string>
 	
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
