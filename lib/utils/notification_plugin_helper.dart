@@ -61,15 +61,15 @@ Future<void> scheduleNotificationForSubscription(
   );
 }
 
-  /// 通知権限のステータスを確認し、必要に応じてユーザーに許可を求める
-  Future<void> handleNotificationPermission() async {
-    final status = await Permission.notification.status;
+/// 通知権限のステータスを確認し、必要に応じてユーザーに許可を求める
+Future<void> handleNotificationPermission() async {
+  final status = await Permission.notification.status;
 
-    if (status.isDenied || status.isRestricted) {
-      final result = await Permission.notification.request();
+  if (status.isDenied || status.isRestricted) {
+    final result = await Permission.notification.request();
 
-      if (result.isPermanentlyDenied) {
-        openAppSettings();
-      }
+    if (result.isPermanentlyDenied) {
+      openAppSettings();
     }
   }
+}
