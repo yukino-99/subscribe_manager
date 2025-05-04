@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'subsc_list_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
@@ -38,6 +38,22 @@ class _SettingPageState extends State<SettingPage> {
                   _notificationTime = pickedTime;
                 });
                 saveNotificationTime(pickedTime);
+              }
+            },
+          ),
+
+          /// プライバシーポリシーリンクタイル
+          ListTile(
+            title: const Text('プライバシーポリシー'),
+            leading: const Icon(Icons.privacy_tip),
+            onTap: () async {
+              final url = Uri.parse(
+                'https://yukino-99.github.io/privacy-policy/sub_manager_policy.html',
+              );
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url, mode: LaunchMode.externalApplication);
+              } else {
+                debugPrint('URLを開けません: $url');
               }
             },
           ),
