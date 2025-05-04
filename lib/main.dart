@@ -21,7 +21,8 @@ Future<void> main() async {
   await NotificationService.ensureInitialized();
 
   // 通知権限チェック処理を実行
-  handleNotificationPermission();
+  // handleNotificationPermission();
+  await ensureNotificationPermission();
 
   runApp(MyApp());
 }

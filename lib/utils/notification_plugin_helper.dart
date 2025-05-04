@@ -73,3 +73,20 @@ Future<void> handleNotificationPermission() async {
     }
   }
 }
+
+/// アプリ起動時に呼ぶ簡易チェック
+Future<void> ensureNotificationPermission() async {
+  final status = await Permission.notification.status;
+
+  // ❶ まだ決まっていなければリクエスト
+  if (status.isDenied) {
+    await Permission.notification.request();
+    return;
+  }
+
+  // ❷ 永久拒否されている場合は “許可が必要です” という SnackBar などを
+  //    表示するだけにとどめ、勝手に openAppSettings() へ飛ばさない
+  if (status.isPermanentlyDenied) {
+    // Optional: 画面上にバナー表示など
+  }
+}
