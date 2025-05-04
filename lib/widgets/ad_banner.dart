@@ -16,8 +16,8 @@ class _AdBannerState extends State<AdBanner> {
   void initState() {
     super.initState();
     _bannerAd = BannerAd(
-      // adUnitId: 'ca-app-pub-6435113782767647/2488108091', // 本番テストユニットID
-      adUnitId: 'ca-app-pub-3940256099942544/2934735716', // テストユニットID
+      adUnitId: 'ca-app-pub-6435113782767647/2488108091', // 本番テストユニットID
+      // adUnitId: 'ca-app-pub-3940256099942544/2934735716', // テストユニットID
       size: AdSize.banner,
       request: const AdRequest(),
       listener: BannerAdListener(
