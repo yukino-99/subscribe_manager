@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
@@ -11,11 +15,14 @@ class SettingPage extends StatefulWidget {
 
 class _SettingPageState extends State<SettingPage> {
   TimeOfDay _notificationTime = TimeOfDay(hour: 9, minute: 0); // デフォルト9:00
+  int _offsetDays = 1;
+  bool _changed = false;
 
   @override
   void initState() {
     super.initState();
     loadNotificationTime();
+    loadOffSetDays();
   }
 
   @override
@@ -76,6 +83,19 @@ class _SettingPageState extends State<SettingPage> {
 
     setState(() {
       _notificationTime = TimeOfDay(hour: hour, minute: minute);
+    });
+  
+  }
+
+  Future<void> saveOffsetDays(int days) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('notification_offset_days', days);
+  }
+
+  Future<void> loadOffSetDays() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _offsetDays = prefs.getInt('notification_offset_days') ?? 1; // デフォルト前日
     });
   }
 }
